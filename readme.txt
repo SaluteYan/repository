@@ -6,4 +6,8 @@ Creating a new branch is quick AND simple.
 =======
 Creating a new branch is quick AND simple.
 >>>>>>> dev
- of merge
+<<<<<<< HEAD
+Git test of merge
+=======
+Git test of merge
+>>>>>>> featurel
