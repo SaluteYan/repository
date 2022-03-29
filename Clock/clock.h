@@ -4,6 +4,8 @@
 #include <QWidget>
 #include <qmath.h>
 #include <QRectF>
+#include <QTime>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class Clock; }
@@ -16,9 +18,13 @@ class Clock : public QWidget
 public:
     Clock(QWidget *parent = nullptr);
     void paintEvent(QPaintEvent*);
+    double angle_hour = 0;
+    double angle_minute = 0;
+    double angle_second = 0;
     ~Clock();
 
 private:
+    QTimer *timer;
     Ui::Clock *ui;
 };
 #endif // CLOCK_H

@@ -6,11 +6,16 @@
 #include <QPalette>
 #define PI 3.14159026
 
+
 Clock::Clock(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::Clock)
 {
     ui->setupUi(this);
+    //设置定时器
+    timer = new QTimer(this);
+    timer->start(1000);
+    connect(timer,SIGNAL(timeout()),this,SLOT(update()));
 }
 void Clock::paintEvent(QPaintEvent *){
 
@@ -26,6 +31,8 @@ void Clock::paintEvent(QPaintEvent *){
     //画钟表的外框
     //实例化画家对象，this指定当前的设备
     QPainter painter(this);
+    //存储当前时刻的画面
+    painter.save();
     //防止图形走样
     painter.setRenderHint(QPainter::Antialiasing);
     //将坐标系原点移至中心点
@@ -46,6 +53,9 @@ void Clock::paintEvent(QPaintEvent *){
     palette.setBrush(QPalette::Background, QBrush(backcol));
     this->setPalette(palette);
 
+    //获取当前时间
+    QTime time = QTime::currentTime();
+
     //画时针
     pen.setColor(hourcol);
     //设置画笔的宽度
@@ -53,7 +63,8 @@ void Clock::paintEvent(QPaintEvent *){
     //让画家使用该画笔
     painter.setPen(pen);
     //画时钟的直线
-    painter.drawLine(0,0,60,60);
+    angle_hour = PI * (time.hour()*30 + time.minute()*30/60 +time.second()*30/3600)/180;
+    painter.drawLine(0,0,80*sin(angle_hour),-80*cos(angle_hour));
     //画小时线
     pen.setWidth(3);
     pen.setColor(textcol);
@@ -67,7 +78,8 @@ void Clock::paintEvent(QPaintEvent *){
     pen.setColor(minutecol);
     pen.setWidth(5);
     painter.setPen(pen);
-    painter.drawLine(0,0,70,-70);
+    angle_minute = PI * (time.minute()*6 + time.second()*6/60)/180;
+    painter.drawLine(0,0,100*sin(angle_minute),-100*cos(angle_minute));
     //画分针线
     pen.setWidth(2);
     pen.setColor(textcol);
@@ -81,6 +93,7 @@ void Clock::paintEvent(QPaintEvent *){
     pen.setColor(secondcol);
     pen.setWidth(5);
     painter.setPen(pen);
+    angle_second = PI * (time.second()*6)/180;
     painter.drawLine(0,0,-80,-80);
 
     //画中心点
@@ -89,6 +102,7 @@ void Clock::paintEvent(QPaintEvent *){
     pen.setWidth(1);
     painter.setPen(pen);
     painter.drawEllipse(-5,-5,10,10);
+    painter.restore();
 
    /* //绘制文本
     pen.setColor(hourcol);
@@ -103,18 +117,6 @@ void Clock::paintEvent(QPaintEvent *){
     for (int i = 1;i <= 12;i++){
         painter.drawText(QPoint(110*cos(PI*(i-1)/6 - PI/3),110*sin(PI*(i-1)/6 - PI/3)),QString::number(i));
     }*/
-
-
-
-
-
-
-
-
-
-
-
-
 }
 
 Clock::~Clock()
